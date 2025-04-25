@@ -1,25 +1,29 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
 from wordcloud import WordCloud
-import gdown
+import requests
 
 # Function to download the dataset from Google Drive
 @st.cache_data
 def download_data():
-    # Google Drive file ID (from your link)
+    # Google Drive file ID (extracted from your link)
     file_id = '1GvHWbdGp8MV2XzMZuMY1M8PuB6xDX4gc'
     url = f'https://drive.google.com/uc?export=download&id={file_id}'
-    output = 'dataset_with_sentiment.csv'
 
-    # Download the file from Google Drive
-    gdown.download(url, output, quiet=False)
+    # Send GET request to download the file
+    response = requests.get(url, stream=True)
+    with open('dataset_with_sentiment.csv', 'wb') as f:
+        for chunk in response.iter_content(chunk_size=128):
+            f.write(chunk)
 
     # Load the dataset after downloading
-    df = pd.read_csv(output)
+    df = pd.read_csv('dataset_with_sentiment.csv')
+    # Convert 'post_created_time' to datetime
     df['post_created_time'] = pd.to_datetime(df['post_created_time'])
+    # Standardize 'side' column to title case
     df['side'] = df['side'].str.title()
+    # Correct misspellings in the 'side' column
     df['side'] = df['side'].replace({"Rusia": "Russia", "Ukraina": "Ukraine"})
     return df
 
