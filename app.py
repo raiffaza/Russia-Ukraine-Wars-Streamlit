@@ -10,7 +10,7 @@ import io
 @st.cache_data
 def load_data():
     # Replace this URL with your actual Google Drive download link
-    url = "https://drive.google.com/file/d/18owXrYlXvxNTIycEWeZApzYLP8GdAW_r/view?usp=sharing"
+    url = "https://drive.google.com/uc?id=18owXrYlXvxNTIycEWeZApzYLP8GdAW_r"
     
     # Fetch the dataset from Google Drive
     response = requests.get(url)
@@ -18,8 +18,12 @@ def load_data():
         st.error("Failed to load the dataset. Please check the URL.")
         return None
     
-    # Load the dataset into a DataFrame
-    df = pd.read_csv(io.StringIO(response.text))
+    try:
+        # Load the dataset into a DataFrame
+        df = pd.read_csv(io.StringIO(response.text))
+    except Exception as e:
+        st.error(f"Error loading dataset: {e}")
+        return None
     
     # Convert 'post_created_time' to datetime
     df['post_created_time'] = pd.to_datetime(df['post_created_time'])
