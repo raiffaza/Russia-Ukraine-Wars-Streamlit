@@ -7,13 +7,27 @@ from wordcloud import WordCloud
 # Load data
 @st.cache_data
 def load_data():
-    df = pd.read_csv("dataset_with_sentiment.csv")
+    # Replace this URL with your actual Google Drive download link
+    url = "https://drive.google.com/file/d/18owXrYlXvxNTIycEWeZApzYLP8GdAW_r/view?usp=sharing"
+    
+    # Fetch the dataset from Google Drive
+    response = requests.get(url)
+    if response.status_code != 200:
+        st.error("Failed to load the dataset. Please check the URL.")
+        return None
+    
+    # Load the dataset into a DataFrame
+    df = pd.read_csv(io.StringIO(response.text))
+    
     # Convert 'post_created_time' to datetime
     df['post_created_time'] = pd.to_datetime(df['post_created_time'])
+    
     # Standardize 'side' column to title case
     df['side'] = df['side'].str.title()
+    
     # Correct misspellings in the 'side' column
     df['side'] = df['side'].replace({"Rusia": "Russia", "Ukraina": "Ukraine"})
+    
     return df
 
 df = load_data()
