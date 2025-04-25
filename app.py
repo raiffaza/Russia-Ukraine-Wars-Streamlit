@@ -79,6 +79,7 @@ st.markdown("""
 - Since **November 5, 2024**, former President Donald Trump has consistently expressed concerns over U.S. funding for military aid to Ukraine, emphasizing his priority of addressing domestic issues.
 - This debate escalated on **February 28, 2025**, when President Trump reacted strongly to President Zelensky's decision to reject a U.S.- or Russia-brokered peace or ceasefire agreement.
 - For this analysis, we utilized comments from Reddit users to assess sentiment toward **Russia** and **Ukraine** from **November 5, 2024**, to the latest available date in a dataset sourced from Kaggle, titled **"Public Opinion on the Russia-Ukraine War (Updated Daily)."**
+- To ensure compatibility with GitHub's file size limits, the dataset has been **randomly sampled to under 24 MB** while retaining its essential features and representativeness.
 
 #### Objectives
 - Examine sentiment trends over time to identify shifts in public opinion.
@@ -98,6 +99,7 @@ st.markdown("""
     - Used **VADER** (Lexicon-Based Sentiment Analysis) to classify geopolitical stances from post titles.
     - Applied **Hugging Face's cardiffnlp/twitter-roberta-base-sentiment** model for sentiment analysis of user comments.
   - **Feature Engineering**: Reduced dataset size by selecting important columns and optimized runtime for analysis.
+  - **Random Sampling**: The dataset was randomly sampled to under **24 MB** to comply with GitHub's file size restrictions, ensuring accessibility while preserving its key characteristics.
 """)
 
 # Sentiment Distribution (Pie Chart)
