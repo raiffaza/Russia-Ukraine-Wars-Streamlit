@@ -17,7 +17,7 @@ def load_data():
     return df
 
 df = load_data()
-st.info("The source code for this Streamlit app is available on [GitHub](https://github.com/raiffaza/Russia-Ukraine-Wars-Streamlit).")
+st.info("The source code for this Streamlit app is available on [GitHub](https://github.com/raiffaza/RUSSIA-UKRAINE-REDDIT-USERS-SENTIMENT).")
 # Sidebar filters
 st.sidebar.header("Filters")
 
@@ -73,34 +73,34 @@ This analysis examines public sentiment following the U.S. presidential election
 
 # Explanation Section
 with st.expander("About the Research"):
-st.markdown("""
-#### Background
-- The Russia-Ukraine war began in February 2022 when Russia launched a full-scale invasion of Ukraine, escalating tensions that had been simmering since Russia's annexation of Crimea in 2014. 
-- Since **November 5, 2024**, former President Donald Trump has consistently expressed concerns over U.S. funding for military aid to Ukraine, emphasizing his priority of addressing domestic issues.
-- This debate escalated on **February 28, 2025**, when President Trump reacted strongly to President Zelensky's decision to reject a U.S.- or Russia-brokered peace or ceasefire agreement.
-- For this analysis, we utilized comments from Reddit users to assess sentiment toward **Russia** and **Ukraine** from **November 5, 2024**, to the latest available date in a dataset sourced from Kaggle, titled **"Public Opinion on the Russia-Ukraine War (Updated Daily)."**
-- To ensure compatibility with GitHub's file size limits, the dataset has been **randomly sampled to under 24 MB** while retaining its essential features and representativeness.
+    st.markdown("""
+    #### Background
+    - The Russia-Ukraine war began in February 2022 when Russia launched a full-scale invasion of Ukraine, escalating tensions that had been simmering since Russia's annexation of Crimea in 2014. 
+    - Since **November 5, 2024**, former President Donald Trump has consistently expressed concerns over U.S. funding for military aid to Ukraine, emphasizing his priority of addressing domestic issues.
+    - This debate escalated on **February 28, 2025**, when President Trump reacted strongly to President Zelensky's decision to reject a U.S.- or Russia-brokered peace or ceasefire agreement.
+    - For this analysis, we utilized comments from Reddit users to assess sentiment toward **Russia** and **Ukraine** from **November 5, 2024**, to the latest available date in a dataset sourced from Kaggle, titled **"Public Opinion on the Russia-Ukraine War (Updated Daily)."**
+    - To ensure compatibility with GitHub's file size limits, the dataset has been **randomly sampled to under 24 MB** while retaining its essential features and representativeness.
 
-#### Objectives
-- Examine sentiment trends over time to identify shifts in public opinion.
-- Identify key events that triggered changes in sentiment, such as geopolitical developments or policy announcements.
-- Provide insights into public opinion regarding the geopolitical landscape, focusing on the dynamics between **Russia**, **Ukraine**, and the **USA**.
+    #### Objectives
+    - Examine sentiment trends over time to identify shifts in public opinion.
+    - Identify key events that triggered changes in sentiment, such as geopolitical developments or policy announcements.
+    - Provide insights into public opinion regarding the geopolitical landscape, focusing on the dynamics between **Russia**, **Ukraine**, and the **USA**.
 
-#### Dataset
-- **Source**: Kaggle dataset titled **"Public Opinion on the Russia-Ukraine War (Updated Daily)."**
-- **Features**: 
-  - Comments: Text-based posts from Reddit users.
-  - Sentiment Scores: Indicates whether the sentiment is positive, neutral, or negative.
-  - Side: Specifies whether the comment pertains to **Russia**, **Ukraine**, or the **USA**.
-  - Timestamps: The date and time when the post was created.
-- **Preprocessing**:
-  - **Data Cleaning**: Removed duplicates, handled missing values, and cleaned text data.
-  - **Sentiment Analysis**:
-    - Used **VADER** (Lexicon-Based Sentiment Analysis) to classify geopolitical stances from post titles.
-    - Applied **Hugging Face's cardiffnlp/twitter-roberta-base-sentiment** model for sentiment analysis of user comments.
-  - **Feature Engineering**: Reduced dataset size by selecting important columns and optimized runtime for analysis.
-  - **Random Sampling**: The dataset was randomly sampled to under **24 MB** to comply with GitHub's file size restrictions, ensuring accessibility while preserving its key characteristics.
-""")
+    #### Dataset
+    - **Source**: Kaggle dataset titled **"Public Opinion on the Russia-Ukraine War (Updated Daily)."**
+    - **Features**: 
+      - Comments: Text-based posts from Reddit users.
+      - Sentiment Scores: Indicates whether the sentiment is positive, neutral, or negative.
+      - Side: Specifies whether the comment pertains to **Russia**, **Ukraine**, or the **USA**.
+      - Timestamps: The date and time when the post was created.
+    - **Preprocessing**:
+      - **Data Cleaning**: Removed duplicates, handled missing values, and cleaned text data.
+      - **Sentiment Analysis**:
+        - Used **VADER** (Lexicon-Based Sentiment Analysis) to classify geopolitical stances from post titles.
+        - Applied **Hugging Face's cardiffnlp/twitter-roberta-base-sentiment** model for sentiment analysis of user comments.
+      - **Feature Engineering**: Reduced dataset size by selecting important columns and optimized runtime for analysis.
+      - **Random Sampling**: The dataset was randomly sampled to under **24 MB** to comply with GitHub's file size restrictions, ensuring accessibility while preserving its key characteristics.
+    """)
 
 # Sentiment Distribution (Pie Chart)
 st.subheader("Sentiment Distribution")
