@@ -12,29 +12,39 @@ def load_data():
     # Replace this URL with your actual Google Drive download link
     url = "https://drive.google.com/uc?id=18owXrYlXvxNTIycEWeZApzYLP8GdAW_r"
     
-    # Fetch the dataset from Google Drive
-    response = requests.get(url)
-    if response.status_code != 200:
-        st.error("Failed to load the dataset. Please check the URL.")
-        return None
-    
     try:
+        # Fetch the dataset from Google Drive
+        response = requests.get(url)
+        if response.status_code != 200:
+            st.error(f"Failed to fetch dataset. Status code: {response.status_code}")
+            return None
+        
         # Load the dataset into a DataFrame
         df = pd.read_csv(io.StringIO(response.text))
+        
+        # Log the column names for debugging
+        print("Dataset Columns:", df.columns.tolist())
+        
+        # Check for required columns
+        required_columns = ['post_created_time', 'sentiment', 'side', 'clean_text']
+        missing_columns = [col for col in required_columns if col not in df.columns]
+        if missing_columns:
+            st.error(f"The dataset is missing the following columns: {', '.join(missing_columns)}.")
+            return None
+        
+        # Convert 'post_created_time' to datetime
+        df['post_created_time'] = pd.to_datetime(df['post_created_time'])
+        
+        # Standardize 'side' column to title case
+        df['side'] = df['side'].str.title()
+        
+        # Correct misspellings in the 'side' column
+        df['side'] = df['side'].replace({"Rusia": "Russia", "Ukraina": "Ukraine"})
+        
+        return df
     except Exception as e:
         st.error(f"Error loading dataset: {e}")
         return None
-    
-    # Convert 'post_created_time' to datetime
-    df['post_created_time'] = pd.to_datetime(df['post_created_time'])
-    
-    # Standardize 'side' column to title case
-    df['side'] = df['side'].str.title()
-    
-    # Correct misspellings in the 'side' column
-    df['side'] = df['side'].replace({"Rusia": "Russia", "Ukraina": "Ukraine"})
-    
-    return df
 
 df = load_data()
 st.info("The source code for this Streamlit app is available on [GitHub](https://github.com/raiffaza/RUSSIA-UKRAINE-REDDIT-USERS-SENTIMENT).")
