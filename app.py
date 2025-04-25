@@ -17,7 +17,7 @@ def load_data():
     return df
 
 df = load_data()
-st.info("The source code for this Streamlit app is available on [GitHub](https://github.com/raiffaza/RUSSIA-UKRAINE-REDDIT-USERS-SENTIMENT).")
+st.info("The source code for this Streamlit app is available on [GitHub](https://github.com/raiffaza/Russia-Ukraine-Wars-Streamlit).")
 # Sidebar filters
 st.sidebar.header("Filters")
 
