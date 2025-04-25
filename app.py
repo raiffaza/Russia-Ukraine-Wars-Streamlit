@@ -1,24 +1,13 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
+import seaborn as sns
 from wordcloud import WordCloud
-import requests
 
-# Function to download the dataset from Google Drive
+# Load data
 @st.cache_data
-def download_data():
-    # Google Drive file ID (extracted from your link)
-    file_id = '1GvHWbdGp8MV2XzMZuMY1M8PuB6xDX4gc'
-    url = f'https://drive.google.com/uc?export=download&id={file_id}'
-
-    # Send GET request to download the file
-    response = requests.get(url, stream=True)
-    with open('dataset_with_sentiment.csv', 'wb') as f:
-        for chunk in response.iter_content(chunk_size=128):
-            f.write(chunk)
-
-    # Load the dataset after downloading
-    df = pd.read_csv('dataset_with_sentiment.csv')
+def load_data():
+    df = pd.read_csv("sampled_dataset_under_24mb.csv")
     # Convert 'post_created_time' to datetime
     df['post_created_time'] = pd.to_datetime(df['post_created_time'])
     # Standardize 'side' column to title case
@@ -27,12 +16,8 @@ def download_data():
     df['side'] = df['side'].replace({"Rusia": "Russia", "Ukraina": "Ukraine"})
     return df
 
-# Load the data
-df = download_data()
-
-# Streamlit Info
+df = load_data()
 st.info("The source code for this Streamlit app is available on [GitHub](https://github.com/raiffaza/RUSSIA-UKRAINE-REDDIT-USERS-SENTIMENT).")
-
 # Sidebar filters
 st.sidebar.header("Filters")
 
@@ -62,15 +47,22 @@ keyword = st.sidebar.text_input("Search Keyword in Comments", "")
 # Filter data based on user inputs
 filtered_df = df[df['sentiment'].isin(selected_sentiment)]
 if selected_side != "All":
+    # Debug: Print unique sides in the dataset
+    print(f"Unique sides in dataset: {df['side'].unique()}")
+    print(f"Selected side: {selected_side}")
+    # Filter by side
     filtered_df = filtered_df[filtered_df['side'] == selected_side]
+    print(f"Filtered by side: {filtered_df.shape}")
 
 filtered_df = filtered_df[
     (filtered_df['post_created_time'].dt.date >= date_range[0]) & 
     (filtered_df['post_created_time'].dt.date <= date_range[1])
 ]
+print(f"Filtered by date range: {filtered_df.shape}")
 
 if keyword:
     filtered_df = filtered_df[filtered_df['clean_text'].str.contains(keyword, case=False)]
+    print(f"Filtered by keyword: {filtered_df.shape}")
 
 # Title and description
 st.title("Public Sentiment Analysis on Russia-Ukraine Conflict")
@@ -78,6 +70,25 @@ st.write("""
 Analyze sentiment trends and topics discussed on Reddit regarding the Russia-Ukraine conflict. 
 This analysis examines public sentiment following the U.S. presidential election in November 2024, focusing on comments from Reddit users.
 """)
+
+# Explanation Section
+with st.expander("About the Research"):
+    st.markdown("""
+    #### Background
+    - Since November 5, 2024, former President Donald Trump has consistently expressed concerns over U.S. funding for military aid to Ukraine, emphasizing his priority of addressing domestic issues.
+    - This debate escalated on February 28, 2025, when President Trump reacted strongly to President Zelensky's decision to reject a U.S.- or Russia-brokered peace or ceasefire agreement.
+    - For this analysis, we utilized comments from Reddit users to assess sentiment toward Russia and Ukraine from November 5, 2024, to the latest available date in a dataset sourced from Kaggle, titled "Public Opinion on the Russia-Ukraine War (Updated Daily)."
+
+    #### Objectives
+    - Examine sentiment trends over time.
+    - Identify key events that triggered changes in sentiment.
+    - Provide insights into public opinion regarding the geopolitical landscape.
+
+    #### Dataset
+    - Source: Kaggle dataset titled "Public Opinion on the Russia-Ukraine War (Updated Daily)."
+    - Features: Comments, sentiment scores, side (Russia, Ukraine, USA), and timestamps.
+    - Preprocessing: Sentiment analysis using VADER and Hugging Face models, data cleaning, and feature engineering.
+    """)
 
 # Sentiment Distribution (Pie Chart)
 st.subheader("Sentiment Distribution")
