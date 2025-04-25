@@ -3,51 +3,39 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from wordcloud import WordCloud
-import requests 
-import io
+import gdown
 
-# Load data
+# Function to download the dataset from Google Drive
 @st.cache_data
-def load_data():
-    # Replace this URL with your actual Google Drive download link
-    url = "https://drive.google.com/uc?id=18owXrYlXvxNTIycEWeZApzYLP8GdAW_r"
+def download_data():
+    # Google Drive file ID (extracted from the URL)
+    file_id = '18owXrYlXvxNTIycEWeZApzYLP8GdAW_r'
+    url = f'https://drive.google.com/uc?id={file_id}'
+    output = 'dataset_with_sentiment.csv'
     
-    try:
-        # Fetch the dataset from Google Drive
-        response = requests.get(url)
-        if response.status_code != 200:
-            st.error(f"Failed to fetch dataset. Status code: {response.status_code}")
-            return None
-        
-        # Load the dataset into a DataFrame
-        df = pd.read_csv(io.StringIO(response.text))
-        
-        # Log the column names for debugging
-        print("Dataset Columns:", df.columns.tolist())
-        
-        # Check for required columns
-        required_columns = ['post_created_time', 'sentiment', 'side', 'clean_text']
-        missing_columns = [col for col in required_columns if col not in df.columns]
-        if missing_columns:
-            st.error(f"The dataset is missing the following columns: {', '.join(missing_columns)}.")
-            return None
-        
-        # Convert 'post_created_time' to datetime
-        df['post_created_time'] = pd.to_datetime(df['post_created_time'])
-        
-        # Standardize 'side' column to title case
-        df['side'] = df['side'].str.title()
-        
-        # Correct misspellings in the 'side' column
-        df['side'] = df['side'].replace({"Rusia": "Russia", "Ukraina": "Ukraine"})
-        
-        return df
-    except Exception as e:
-        st.error(f"Error loading dataset: {e}")
-        return None
+    # Download the dataset from Google Drive
+    gdown.download(url, output, quiet=False)
+    
+    # Load the dataset after downloading
+    df = pd.read_csv(output)
+    
+    # Convert 'post_created_time' to datetime
+    df['post_created_time'] = pd.to_datetime(df['post_created_time'])
+    
+    # Standardize 'side' column to title case
+    df['side'] = df['side'].str.title()
+    
+    # Correct misspellings in the 'side' column
+    df['side'] = df['side'].replace({"Rusia": "Russia", "Ukraina": "Ukraine"})
+    
+    return df
 
-df = load_data()
+# Load the data
+df = download_data()
+
+# Streamlit Info
 st.info("The source code for this Streamlit app is available on [GitHub](https://github.com/raiffaza/RUSSIA-UKRAINE-REDDIT-USERS-SENTIMENT).")
+
 # Sidebar filters
 st.sidebar.header("Filters")
 
@@ -77,22 +65,15 @@ keyword = st.sidebar.text_input("Search Keyword in Comments", "")
 # Filter data based on user inputs
 filtered_df = df[df['sentiment'].isin(selected_sentiment)]
 if selected_side != "All":
-    # Debug: Print unique sides in the dataset
-    print(f"Unique sides in dataset: {df['side'].unique()}")
-    print(f"Selected side: {selected_side}")
-    # Filter by side
     filtered_df = filtered_df[filtered_df['side'] == selected_side]
-    print(f"Filtered by side: {filtered_df.shape}")
 
 filtered_df = filtered_df[
     (filtered_df['post_created_time'].dt.date >= date_range[0]) & 
     (filtered_df['post_created_time'].dt.date <= date_range[1])
 ]
-print(f"Filtered by date range: {filtered_df.shape}")
 
 if keyword:
     filtered_df = filtered_df[filtered_df['clean_text'].str.contains(keyword, case=False)]
-    print(f"Filtered by keyword: {filtered_df.shape}")
 
 # Title and description
 st.title("Public Sentiment Analysis on Russia-Ukraine Conflict")
